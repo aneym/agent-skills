@@ -7,6 +7,7 @@ A curated collection of agent skills for [Claude Code](https://docs.anthropic.co
 | Skill | Description |
 |-------|-------------|
 | [todoist-api](skills/todoist-api/) | Manage Todoist tasks, projects, sections, labels, and comments via the REST API v2. |
+| [plaid](skills/plaid/) | Query bank balances, transactions, and spending insights via Plaid API. |
 
 ## Install
 
@@ -14,6 +15,7 @@ A curated collection of agent skills for [Claude Code](https://docs.anthropic.co
 
 ```bash
 npx skills add aneym/agent-skills --skill todoist-api
+npx skills add aneym/agent-skills --skill plaid
 ```
 
 ### Via [ClawHub](https://clawhub.com)

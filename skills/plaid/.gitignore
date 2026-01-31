@@ -1,0 +1,6 @@
+node_modules/
+state/
+*.env
+.env.*
+plaid-tokens.json
+package-lock.json

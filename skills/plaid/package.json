@@ -1,0 +1,17 @@
+{
+  "name": "openclaw-skill-plaid",
+  "version": "1.0.0",
+  "description": "OpenClaw skill for Plaid — bank balances, transactions, and spending insights",
+  "type": "module",
+  "private": false,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aneym/agent-skills.git",
+    "directory": "skills/plaid"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "plaid": "^28.0.0"
+  }
+}
