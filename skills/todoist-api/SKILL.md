@@ -61,9 +61,76 @@ Read-only (GET): no confirmation needed.
 When creating/updating tasks, use the **API value** (4 = urgent).
 When using filter queries, use the **UI label** (`p1` = urgent).
 
+## Task Links (v2 IDs)
+
+⚠️ **The REST API `url` field uses deprecated numeric IDs.** Todoist deprecated `/app/task/<numeric_id>` URLs (end of 2025). The new format uses alphanumeric v2 IDs.
+
+**New URL format:** `https://app.todoist.com/app/task/<v2_id>`
+
+The REST API v2 does NOT return `v2_id`. Use the Sync API v9 to get it:
+
+### Get v2_id for a single task
+
+```bash
+curl -s -X POST \
+  -H "Authorization: Bearer $TODOIST_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"item_id": "TASK_ID"}' \
+  "https://api.todoist.com/sync/v9/items/get" | jq '.item.v2_id'
+```
+
+Works with both numeric IDs and v2_ids as input.
+
+### Get v2_ids for all tasks (bulk)
+
+```bash
+curl -s -X POST \
+  -H "Authorization: Bearer $TODOIST_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"sync_token": "*", "resource_types": ["items"]}' \
+  "https://api.todoist.com/sync/v9/sync" | jq '[.items[] | {id, v2_id, content}]'
+```
+
+### Build a task link
+
+```bash
+# After getting v2_id from Sync API:
+TASK_ID="9971910530"
+V2_ID=$(curl -s -X POST \
+  -H "Authorization: Bearer $TODOIST_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d "{\"item_id\": \"$TASK_ID\"}" \
+  "https://api.todoist.com/sync/v9/items/get" | jq -r '.item.v2_id')
+echo "https://app.todoist.com/app/task/$V2_ID"
+```
+
+### Efficient bulk pattern (REST + Sync combo)
+
+When listing multiple tasks, do ONE Sync call for the v2_id map instead of N individual lookups:
+
+```bash
+# 1. Get tasks via REST API (for filtering)
+TASKS=$(curl -s -H "Authorization: Bearer $TODOIST_API_TOKEN" \
+  "https://api.todoist.com/rest/v2/tasks?filter=today")
+
+# 2. Build v2_id lookup from Sync API (one call)
+V2_MAP=$(curl -s -X POST \
+  -H "Authorization: Bearer $TODOIST_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"sync_token": "*", "resource_types": ["items"]}' \
+  "https://api.todoist.com/sync/v9/sync" | jq '[.items[] | {(.id): .v2_id}] | add')
+
+# 3. Merge: replace URLs with v2 format
+echo "$TASKS" | jq --argjson map "$V2_MAP" '
+  [.[] | . + {link: "https://app.todoist.com/app/task/\($map[.id])"}]
+'
+```
+
+**When presenting task links to the user, always use v2_id URLs.** Never use the `url` field from the REST API directly.
+
 ## Task Response Object
 
-The API returns tasks with this structure:
+The REST API returns tasks with this structure:
 
 ```json
 {
@@ -93,6 +160,8 @@ The API returns tasks with this structure:
   }
 }
 ```
+
+**Note:** The `url` field uses deprecated numeric IDs. See "Task Links (v2 IDs)" above for the correct URL format.
 
 ### The `due` object
 
