@@ -6,6 +6,7 @@ A curated collection of agent skills for [Claude Code](https://docs.anthropic.co
 
 | Skill | Description |
 |-------|-------------|
+| [notion-api](skills/notion-api/) | Full Notion API CLI with rich markdown support — native tables, callouts, toggles, nested lists, inline formatting, images, and complete CRUD operations. |
 | [todoist-api](skills/todoist-api/) | Manage Todoist tasks, projects, sections, labels, and comments via the REST API v2. |
 | [plaid](skills/plaid/) | Query bank balances, transactions, and spending insights via Plaid API. |
 
@@ -14,6 +15,7 @@ A curated collection of agent skills for [Claude Code](https://docs.anthropic.co
 ### Via [skills.sh](https://skills.sh)
 
 ```bash
+npx skills add aneym/agent-skills --skill notion-api
 npx skills add aneym/agent-skills --skill todoist-api
 npx skills add aneym/agent-skills --skill plaid
 ```
@@ -21,6 +23,7 @@ npx skills add aneym/agent-skills --skill plaid
 ### Via [ClawHub](https://clawhub.com)
 
 ```bash
+clawhub install notion-api
 clawhub install todoist-api
 ```
 
